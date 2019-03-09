@@ -72,7 +72,7 @@ fun Calendar.getNumberOvWeeksInMonth(): Int {
 
 @BindingAdapter(value = ["backgroundDrawable", "dateValue"], requireAll = true)
 fun setDrawableOnContent(view: TextView, calendarMonthModel: CalendarMonthModel, value: String) {
-    if (value == calendarMonthModel.selectedDate) {
+    if (value == "1") {
         calendarMonthModel.setViewSelected(view)
     } else {
         view.background = view.resources.getDrawable(R.drawable.transparent_drawable, null)

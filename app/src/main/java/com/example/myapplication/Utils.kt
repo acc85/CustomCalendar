@@ -73,11 +73,33 @@ fun Calendar.getNumberOvWeeksInMonth(): Int {
 @BindingAdapter(value = ["backgroundDrawable", "dateValue"], requireAll = true)
 fun setDrawableOnContent(view: TextView, calendarMonthModel: CalendarMonthModel, value: String) {
     if (value == "1") {
-        calendarMonthModel.setViewSelected(view)
+        calendarMonthModel.setSelectedDate(view)
     } else {
         view.background = view.resources.getDrawable(R.drawable.transparent_drawable, null)
     }
 }
 
+
+fun Calendar.setupCalendar(m: Int): CalendarMonthModel =
+    CalendarMonthModel().apply {
+        set(Calendar.MONTH, m)
+        var dayNumber = 1
+        for (day in getFirstDayOfMonth()..6) {
+            rows[0][day] = dayNumber.toString()
+            dayNumber++
+        }
+        numberOfWeeks = getNumberOvWeeksInMonth()
+        var daysInMonth = getActualMaximum(Calendar.DAY_OF_MONTH)
+        for (weekNumber in 2..numberOfWeeks) {
+            for (dayInWeek in 0..6) {
+                if (dayNumber <= daysInMonth) {
+                    rows[weekNumber - 1][dayInWeek] = dayNumber.toString()
+                    dayNumber++
+                } else {
+                    break
+                }
+            }
+        }
+    }
 
 

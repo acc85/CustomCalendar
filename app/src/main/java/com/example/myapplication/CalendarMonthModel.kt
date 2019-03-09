@@ -23,7 +23,9 @@ data class CalendarMonthModel(
     var numberOfWeeks: Int = 5,
 
 
-    var selectedate: String = "1"
+    var selectedate: String = "1",
+
+    var calendarCallback:CalendarCallback? = null
 
 
 ) : BaseObservable() {
@@ -63,7 +65,7 @@ data class CalendarMonthModel(
     fun getBottomRowVisibility(): Int =
         if (numberOfWeeks < 5) View.GONE else View.VISIBLE
 
-    fun setViewSelected(view: TextView) {
+    fun setSelectedDate(view:TextView){
         if (view != selectedView && view.text.isNotBlank()) {
             view.background = view.resources.getDrawable(R.drawable.circle_image, null)
             selectedView?.background = view.resources.getDrawable(R.drawable.transparent_drawable, null)
@@ -71,10 +73,14 @@ data class CalendarMonthModel(
         }
     }
 
+    fun onViewClicked(view: TextView) {
+        setSelectedDate(view)
+        calendarCallback?.OnDatechanged(view.text.toString(),month,year)
+    }
+
     interface CalendarCallback {
 
         fun OnDatechanged(day: String, month: String, year: String)
-
 
     }
 

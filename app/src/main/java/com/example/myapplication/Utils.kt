@@ -64,7 +64,7 @@ fun Calendar.getFirstDayOfMonth(): Int {
 
 @BindingAdapter(value = ["backgroundDrawable", "dateValue"], requireAll = true)
 fun setDrawableOnContent(view: TextView, calendarMonthModel: CalendarMonthModel, value: String) {
-    if (value == "1") {
+    if (value == calendarMonthModel.selectedate) {
         calendarMonthModel.setSelectedDate(view)
     } else {
         view.background = view.resources.getDrawable(R.drawable.transparent_drawable, null)

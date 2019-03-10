@@ -23,7 +23,7 @@ data class CalendarMonthModel(
     var numberOfWeeks: Int = 5,
 
 
-    var selectedate: String = "1",
+//    var selectedate: String = "1",
 
     var calendarCallback:CalendarCallback? = null
 
@@ -34,10 +34,10 @@ data class CalendarMonthModel(
     var selectedView: View? = null
 
     @Bindable
-    var selectedDate: String = ""
+    var selectedate: String = "1"
         set(value) {
             field = value
-            notifyPropertyChanged(BR.selectedDate)
+            notifyChange()
         }
 
 
@@ -69,15 +69,16 @@ data class CalendarMonthModel(
             View.VISIBLE
 
     fun setSelectedDate(view:TextView){
-        if (view != selectedView && view.text.isNotBlank()) {
-            view.background = view.resources.getDrawable(R.drawable.circle_image, null)
-            selectedView?.background = view.resources.getDrawable(R.drawable.transparent_drawable, null)
+        if(view.text == selectedate){
             selectedView = view
+            view.background = view.resources.getDrawable(R.drawable.circle_image, null)
+        }else{
+            view.background = view.resources.getDrawable(R.drawable.transparent_drawable, null)
         }
     }
 
     fun onViewClicked(view: TextView) {
-        setSelectedDate(view)
+        selectedate = view.text.toString()
         calendarCallback?.OnDatechanged(view.text.toString(),month,year)
     }
 

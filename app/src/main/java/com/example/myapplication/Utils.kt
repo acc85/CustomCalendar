@@ -96,29 +96,3 @@ fun Calendar.setupCalendar(m: Int): CalendarMonthModel =
         calendarModel.numberOfWeeks = weekNumber+1
     }
 
-
-
-//fun Calendar.setupCalendar(m: Int): CalendarMonthModel =
-//    CalendarMonthModel().also {calendarModel->
-//        set(Calendar.MONTH, m)
-//        var dayNumber = 1
-//        var firstDayOfMonth = getFirstDayOfMonth(this)
-//        for (day in firstDayOfMonth..6) {
-//            calendarModel.rows[0][day] = dayNumber.toString()
-//            dayNumber++
-//        }
-//        calendarModel.numberOfWeeks = getNumberOvWeeksInMonth()
-//        var daysInMonth = getActualMaximum(Calendar.DAY_OF_MONTH)
-//        for (weekNumber in 2..calendarModel.numberOfWeeks) {
-//            for (dayInWeek in 0..6) {
-//                if (dayNumber <= daysInMonth) {
-//                    calendarModel.rows[weekNumber - 1][dayInWeek] = dayNumber.toString()
-//                    dayNumber++
-//                } else {
-//                    break
-//                }
-//            }
-//        }
-//    }
-
-

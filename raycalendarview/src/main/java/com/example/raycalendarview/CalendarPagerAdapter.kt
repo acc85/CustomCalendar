@@ -4,8 +4,8 @@ import android.view.LayoutInflater
 import android.view.ViewGroup
 import androidx.databinding.DataBindingUtil
 import androidx.recyclerview.widget.RecyclerView
-import com.example.myapplication.databinding.FiveRowCalendarBinding
-import com.example.myapplication.generated.callback.OnClickListener
+import com.example.raycalendarview.R
+import com.example.raycalendarview.databinding.FiveRowCalendarBinding
 
 class CalendarPagerAdapter : RecyclerView.Adapter<CalendarPagerAdapter.CalendarViewHolder>() {
 

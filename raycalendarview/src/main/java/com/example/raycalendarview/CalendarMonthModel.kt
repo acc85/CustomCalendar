@@ -4,6 +4,7 @@ import android.view.View
 import android.widget.TextView
 import androidx.databinding.BaseObservable
 import androidx.databinding.Bindable
+import com.example.raycalendarview.R
 
 data class CalendarMonthModel(
 

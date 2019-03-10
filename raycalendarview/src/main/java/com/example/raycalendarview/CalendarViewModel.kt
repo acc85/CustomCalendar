@@ -1,23 +1,39 @@
 package com.example.myapplication
 
 import android.view.View
+import androidx.databinding.BaseObservable
+import androidx.databinding.Bindable
 import androidx.databinding.ObservableField
 import androidx.lifecycle.MutableLiveData
 import androidx.lifecycle.ViewModel
+import com.example.raycalendarview.BR
 
-class CalendarViewModel : ViewModel() {
+class CalendarViewModel : BaseObservable() {
 
     val dates: MutableList<CalendarMonthModel> = mutableListOf()
 
-    var month = ObservableField<String>()
+    @Bindable
+    var month = ""
+        set(value){
+            field = value
+            notifyPropertyChanged(BR.month)
+        }
 
-    var year = ObservableField<String>()
+    @Bindable
+    var year = ""
+        set(value){
+            field = value
+            notifyPropertyChanged(BR.year)
+        }
 
-    var view = ObservableField<View?>()
+    @Bindable
+    var view = ""
+
+    var currentDateReyclerPos = -1
 
     fun setCurrentMonthAndYear(position: Int) {
-        month.set(dates[position].month)
-        year.set(dates[position].year)
+        month = dates[position].month
+        year = dates[position].year
     }
 
     var onDateChanged = MutableLiveData<DateObject>()

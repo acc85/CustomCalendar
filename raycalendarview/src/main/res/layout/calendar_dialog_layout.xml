@@ -55,7 +55,7 @@
                 android:layout_marginTop="8dp" android:layout_marginStart="8dp"/>
         <androidx.recyclerview.widget.RecyclerView
                 android:id="@+id/calendar_pager"
-                android:layout_width="500dp"
+                android:layout_width="match_parent"
                 android:layout_height="match_parent"
                 android:layout_marginTop="8dp"
                 app:layout_constraintEnd_toEndOf="parent"

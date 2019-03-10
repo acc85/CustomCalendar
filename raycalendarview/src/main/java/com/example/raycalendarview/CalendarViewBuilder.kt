@@ -1,12 +1,15 @@
 package com.example.myapplication
 
 import android.content.Context
+import android.content.res.Resources
 import android.view.LayoutInflater
 import android.view.View
 import android.view.ViewGroup.LayoutParams.MATCH_PARENT
 import androidx.appcompat.app.AlertDialog
 import androidx.appcompat.app.AppCompatActivity
 import androidx.constraintlayout.widget.ConstraintLayout
+import androidx.constraintlayout.widget.ConstraintSet.MATCH_CONSTRAINT
+import androidx.constraintlayout.widget.ConstraintSet.MATCH_CONSTRAINT_WRAP
 import androidx.databinding.DataBindingUtil
 import androidx.lifecycle.ViewModelProviders
 import androidx.recyclerview.widget.LinearLayoutManager
@@ -36,20 +39,19 @@ class CalendarViewBuilder {
         null,
         false
     ).also { databinding ->
-        calendarViewModel = CalendarViewModel()
-        GlobalScope.launch(Dispatchers.Main) {
-            withContext(Dispatchers.IO) {
-                setupCalendarData().await()
-            }
 
-            databinding.root.findViewById<RecyclerView>(R.id.calendar_pager).adapter =
+        calendarViewModel = CalendarViewModel()
+        setupCalendarData()
+        databinding.root.findViewById<RecyclerView>(R.id.calendar_pager).also { recyclerview ->
+            recyclerview.setHasFixedSize(true)
+            recyclerview.layoutParams.width = getWidth()
+            recyclerview.adapter =
                 CalendarPagerAdapter().also { calendarPagerAdapter ->
                     calendarPagerAdapter.calendarViewModel = calendarViewModel
                     if (calendarViewModel.month == "" && calendarViewModel.year == "") {
                         calendarViewModel.setCurrentMonthAndYear(0)
                     }
                 }
-
             databinding.calendarViewModel = calendarViewModel
             setupCalendarView(databinding.root)
             calendarCallback = object : CalendarMonthModel.CalendarCallback {
@@ -58,42 +60,44 @@ class CalendarViewBuilder {
                 }
             }
         }
-
     }.root
 
 
-    private fun setupCalendarData(): Deferred<Calendar> {
-        return GlobalScope.async {
-            var currentYear = 0
-            var currentMonth = 0
-            var position = 0
-            val dfs = DateFormatSymbols()
-            val months = dfs.months
-            Calendar.getInstance().apply {
-                currentYear = get(Calendar.YEAR)
-                currentMonth = get(Calendar.MONTH)
-                calendarViewModel.month = months[currentMonth]
-                calendarViewModel.year = currentYear.toString()
+    private fun getWidth():Int{
+        return Resources.getSystem().getDisplayMetrics().widthPixels
+    }
 
-                for (y in 0..200) {
-                    set(Calendar.YEAR, 1900 + y)
-                    for (m in 0..11) {
-                        position++
-                        calendarViewModel.dates.add(setupCalendar(m).also { calendarMonthModel ->
-                            if (calendarViewModel.currentDateReyclerPos == -1) {
-                                if (currentYear == get(Calendar.YEAR) && currentMonth == m + 1) {
-                                    calendarViewModel.currentDateReyclerPos = position
-                                }
+
+    private fun setupCalendarData(): Calendar {
+        var currentYear = 0
+        var currentMonth = 0
+        var position = 0
+        val dfs = DateFormatSymbols()
+        val months = dfs.months
+        return Calendar.getInstance().apply {
+            currentYear = get(Calendar.YEAR)
+            currentMonth = get(Calendar.MONTH)
+            calendarViewModel.month = months[currentMonth]
+            calendarViewModel.year = currentYear.toString()
+
+            for (y in 0..200) {
+                set(Calendar.YEAR, 1900 + y)
+                for (m in 0..11) {
+                    position++
+                    calendarViewModel.dates.add(setupCalendar(m).also { calendarMonthModel ->
+                        if (calendarViewModel.currentDateReyclerPos == -1) {
+                            if (currentYear == get(Calendar.YEAR) && currentMonth == m + 1) {
+                                calendarViewModel.currentDateReyclerPos = position
                             }
-                            calendarMonthModel.month = months[get(Calendar.MONTH)]
-                            calendarMonthModel.year = get(Calendar.YEAR).toString()
-                            calendarMonthModel.calendarCallback = object : CalendarMonthModel.CalendarCallback {
-                                override fun OnDatechanged(day: String, month: String, year: String) {
-                                    calendarCallback?.OnDatechanged(day, month, year)
-                                }
+                        }
+                        calendarMonthModel.month = months[get(Calendar.MONTH)]
+                        calendarMonthModel.year = get(Calendar.YEAR).toString()
+                        calendarMonthModel.calendarCallback = object : CalendarMonthModel.CalendarCallback {
+                            override fun OnDatechanged(day: String, month: String, year: String) {
+                                calendarCallback?.OnDatechanged(day, month, year)
                             }
-                        })
-                    }
+                        }
+                    })
                 }
             }
         }
@@ -124,7 +128,7 @@ class CalendarViewBuilder {
     private fun createDialog(context: Context) {
         GlobalScope.launch(Dispatchers.Main) {
             withContext(Dispatchers.IO) {
-                setupCalendarData().await()
+                setupCalendarData()
             }
             AlertDialog.Builder(context).create().apply {
                 DataBindingUtil.inflate<CalendarDialogLayoutBinding>(
@@ -141,7 +145,10 @@ class CalendarViewBuilder {
                                     calendarViewModel.setCurrentMonthAndYear(0)
                                 }
                             }
-                        recyclerview.layoutParams = ConstraintLayout.LayoutParams(context.resources.getDimension(R.dimen.recyclerview_dialog_with).toInt(), MATCH_PARENT)
+                        recyclerview.layoutParams = ConstraintLayout.LayoutParams(
+                            context.resources.getDimension(R.dimen.recyclerview_dialog_with).toInt(),
+                            MATCH_PARENT
+                        )
                     }
 
                     databinding.calendarViewModel = calendarViewModel

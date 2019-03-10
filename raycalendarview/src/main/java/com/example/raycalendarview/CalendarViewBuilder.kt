@@ -8,16 +8,18 @@ import android.view.ViewGroup.LayoutParams.MATCH_PARENT
 import androidx.appcompat.app.AlertDialog
 import androidx.appcompat.app.AppCompatActivity
 import androidx.constraintlayout.widget.ConstraintLayout
-import androidx.constraintlayout.widget.ConstraintSet.MATCH_CONSTRAINT
-import androidx.constraintlayout.widget.ConstraintSet.MATCH_CONSTRAINT_WRAP
 import androidx.databinding.DataBindingUtil
-import androidx.lifecycle.ViewModelProviders
 import androidx.recyclerview.widget.LinearLayoutManager
 import androidx.recyclerview.widget.PagerSnapHelper
 import androidx.recyclerview.widget.RecyclerView
+import com.example.raycalendarview.CalendarEventObject
 import com.example.raycalendarview.R
 import com.example.raycalendarview.databinding.CalendarDialogLayoutBinding
-import kotlinx.coroutines.*
+import kotlinx.android.synthetic.main.calendar_dialog_layout.view.*
+import kotlinx.coroutines.Dispatchers
+import kotlinx.coroutines.GlobalScope
+import kotlinx.coroutines.launch
+import kotlinx.coroutines.withContext
 import java.text.DateFormatSymbols
 import java.util.*
 
@@ -32,6 +34,12 @@ class CalendarViewBuilder {
         createDialog(activity)
     }
 
+    var eventList: MutableList<CalendarEventObject> = mutableListOf()
+    set(value){
+        field = value
+        setupCalendarData()
+    }
+
 
     fun createCalendarView(context: Context): View = DataBindingUtil.inflate<CalendarDialogLayoutBinding>(
         LayoutInflater.from(context),
@@ -42,20 +50,31 @@ class CalendarViewBuilder {
 
         calendarViewModel = CalendarViewModel()
         setupCalendarData()
-        databinding.root.findViewById<RecyclerView>(R.id.calendar_pager).also { recyclerview ->
-            recyclerview.setHasFixedSize(true)
-            recyclerview.layoutParams.width = getWidth()
-            recyclerview.adapter =
-                CalendarPagerAdapter().also { calendarPagerAdapter ->
-                    calendarPagerAdapter.calendarViewModel = calendarViewModel
-                    if (calendarViewModel.month == "" && calendarViewModel.year == "") {
-                        calendarViewModel.setCurrentMonthAndYear(0)
+        databinding.root.apply {
+            findViewById<RecyclerView>(R.id.calendar_pager).also { recyclerview ->
+                recyclerview.setHasFixedSize(true)
+                recyclerview.layoutParams.width = getWidthOfScreen()
+                recyclerview.adapter =
+                    CalendarPagerAdapter().also { calendarPagerAdapter ->
+                        calendarPagerAdapter.calendarViewModel = calendarViewModel
+                        if (calendarViewModel.month == "" && calendarViewModel.year == "") {
+                            calendarViewModel.setCurrentMonthAndYear(0)
+                        }
+                    }
+                databinding.calendarViewModel = calendarViewModel
+                setupCalendarView(databinding.root)
+                calendarCallback = object : CalendarMonthModel.CalendarCallback {
+                    override fun OnDatechanged(day: String, month: String, year: String) {
+
                     }
                 }
-            databinding.calendarViewModel = calendarViewModel
-            setupCalendarView(databinding.root)
-            calendarCallback = object : CalendarMonthModel.CalendarCallback {
-                override fun OnDatechanged(day: String, month: String, year: String) {
+                leftButton.setOnClickListener {
+                    recyclerview.smoothScrollToPosition((recyclerview.layoutManager as LinearLayoutManager).findFirstVisibleItemPosition() - 1)
+                    calendarViewModel.setCurrentMonthAndYear((recyclerview.layoutManager as LinearLayoutManager).findFirstVisibleItemPosition() - 1)
+                }
+                rightButton.setOnClickListener {
+                    recyclerview.smoothScrollToPosition((recyclerview.layoutManager as LinearLayoutManager).findFirstVisibleItemPosition() + 1)
+                    calendarViewModel.setCurrentMonthAndYear((recyclerview.layoutManager as LinearLayoutManager).findFirstVisibleItemPosition() + 1)
 
                 }
             }
@@ -63,7 +82,7 @@ class CalendarViewBuilder {
     }.root
 
 
-    private fun getWidth():Int{
+    private fun getWidthOfScreen(): Int {
         return Resources.getSystem().getDisplayMetrics().widthPixels
     }
 

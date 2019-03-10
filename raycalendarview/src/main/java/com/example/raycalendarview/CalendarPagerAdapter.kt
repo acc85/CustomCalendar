@@ -34,6 +34,9 @@ class CalendarPagerAdapter : RecyclerView.Adapter<CalendarPagerAdapter.CalendarV
         holder.bind?.invalidateAll()
     }
 
+    override fun getItemViewType(position: Int): Int {
+        return 0
+    }
 
     override fun onViewDetachedFromWindow(holder: CalendarViewHolder) {
         super.onViewDetachedFromWindow(holder)

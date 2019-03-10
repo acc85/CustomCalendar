@@ -12,3 +12,14 @@ fun setDrawableOnContent(view: TextView, calendarMonthModel: CalendarMonthModel,
         view.background = view.resources.getDrawable(R.drawable.transparent_drawable, null)
     }
 }
+
+
+@BindingAdapter(value = ["eventDrawable", "hasEvent"], requireAll = true)
+fun setEventDrawableOnContent(view: TextView, hasEvent: Boolean) {
+    if (hasEvent) {
+        view.setCompoundDrawablesWithIntrinsicBounds(null,null,null,view.resources.getDrawable(R.drawable.event_drawable,null))
+    } else {
+        view.setCompoundDrawablesWithIntrinsicBounds(null,null,null,view.resources.getDrawable(R.drawable.transparent_event_drawable,null))
+
+    }
+}

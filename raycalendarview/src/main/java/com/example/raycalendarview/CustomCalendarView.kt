@@ -3,6 +3,7 @@ package com.example.myapplication
 import android.content.Context
 import android.util.AttributeSet
 import androidx.constraintlayout.widget.ConstraintLayout
+import com.example.raycalendarview.CalendarEventObject
 
 class CustomCalendarView(context:Context, attributeSet: AttributeSet?, defStyle:Int) : ConstraintLayout(context, attributeSet, defStyle){
 
@@ -53,6 +54,10 @@ class CustomCalendarView(context:Context, attributeSet: AttributeSet?, defStyle:
 
     init{
         addView(calendarViewBuilder.createCalendarView(context))
+    }
+
+    fun setEventItems(eventList:MutableList<CalendarEventObject>){
+        calendarViewBuilder.eventList = eventList
     }
 
 

@@ -177,6 +177,7 @@
                 android:text="@{calendarModel.getValue(calendarModel.rows[0][5])}"
                 app:backgroundDrawable="@{calendarModel}"
                 app:dateValue="@{calendarModel.rows[0][5]}"
+                android:drawableBottom="@drawable/event_drawable"
                 android:onClick="@{(v) -> calendarModel.onViewClicked(rowOneCalendarSaturday)}"
                 app:layout_constraintStart_toStartOf="@+id/saturdayInitial"
                 app:layout_constraintTop_toBottomOf="@+id/saturdayInitial"

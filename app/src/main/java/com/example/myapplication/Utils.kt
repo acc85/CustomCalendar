@@ -61,14 +61,6 @@ fun Calendar.getFirstDayOfMonth(): Int {
     return calWeekNumber - 2
 }
 
-fun Calendar.getNumberOvWeeksInMonth(): Int {
-    val start = get(Calendar.WEEK_OF_MONTH)
-    add(Calendar.MONTH, 1)
-    add(Calendar.DATE, -1)
-    val end = get(Calendar.WEEK_OF_MONTH)
-    return (end - start + 1)
-}
-
 
 @BindingAdapter(value = ["backgroundDrawable", "dateValue"], requireAll = true)
 fun setDrawableOnContent(view: TextView, calendarMonthModel: CalendarMonthModel, value: String) {
@@ -81,25 +73,52 @@ fun setDrawableOnContent(view: TextView, calendarMonthModel: CalendarMonthModel,
 
 
 fun Calendar.setupCalendar(m: Int): CalendarMonthModel =
-    CalendarMonthModel().apply {
+    CalendarMonthModel().also {calendarModel->
         set(Calendar.MONTH, m)
         var dayNumber = 1
         for (day in getFirstDayOfMonth()..6) {
-            rows[0][day] = dayNumber.toString()
+            calendarModel.rows[0][day] = dayNumber.toString()
             dayNumber++
         }
-        numberOfWeeks = getNumberOvWeeksInMonth()
         var daysInMonth = getActualMaximum(Calendar.DAY_OF_MONTH)
-        for (weekNumber in 2..numberOfWeeks) {
+        var weekNumber = 1
+        while(dayNumber <= daysInMonth){
             for (dayInWeek in 0..6) {
                 if (dayNumber <= daysInMonth) {
-                    rows[weekNumber - 1][dayInWeek] = dayNumber.toString()
+                    calendarModel.rows[weekNumber][dayInWeek] = dayNumber.toString()
                     dayNumber++
                 } else {
                     break
                 }
             }
+            weekNumber++
         }
+        calendarModel.numberOfWeeks = weekNumber+1
     }
+
+
+
+//fun Calendar.setupCalendar(m: Int): CalendarMonthModel =
+//    CalendarMonthModel().also {calendarModel->
+//        set(Calendar.MONTH, m)
+//        var dayNumber = 1
+//        var firstDayOfMonth = getFirstDayOfMonth(this)
+//        for (day in firstDayOfMonth..6) {
+//            calendarModel.rows[0][day] = dayNumber.toString()
+//            dayNumber++
+//        }
+//        calendarModel.numberOfWeeks = getNumberOvWeeksInMonth()
+//        var daysInMonth = getActualMaximum(Calendar.DAY_OF_MONTH)
+//        for (weekNumber in 2..calendarModel.numberOfWeeks) {
+//            for (dayInWeek in 0..6) {
+//                if (dayNumber <= daysInMonth) {
+//                    calendarModel.rows[weekNumber - 1][dayInWeek] = dayNumber.toString()
+//                    dayNumber++
+//                } else {
+//                    break
+//                }
+//            }
+//        }
+//    }
 
 

@@ -63,7 +63,10 @@ data class CalendarMonthModel(
 
 
     fun getBottomRowVisibility(): Int =
-        if (numberOfWeeks < 5) View.GONE else View.VISIBLE
+        if (numberOfWeeks < 5)
+            View.GONE
+        else
+            View.VISIBLE
 
     fun setSelectedDate(view:TextView){
         if (view != selectedView && view.text.isNotBlank()) {

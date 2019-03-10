@@ -3,7 +3,6 @@ package com.example.myapplication
 import org.junit.Test
 
 import org.junit.Assert.*
-import java.time.YearMonth
 import java.util.*
 
 
@@ -23,7 +22,6 @@ class ExampleUnitTest {
     fun checkNumberOfWeeksInMonth(){
         var calendar:Calendar = Calendar.getInstance()
         assert(calendar.getActualMaximum(Calendar.WEEK_OF_MONTH) > 0)
-//        assert(calendar.getNumberOvWeeksInMonth() >0)
     }
 
     @Test
@@ -48,5 +46,16 @@ class ExampleUnitTest {
         }
         assert(calendarMonthModel.rows[0][0].isNotBlank())
 
+    }
+
+
+    @Test
+    fun checkNumberOfWeeks(){
+        var calendarModel:CalendarMonthModel? = null
+        Calendar.getInstance().apply {
+            set(Calendar.YEAR, 1900)
+            calendarModel = setupCalendar(3)
+            assert(calendarModel!!.rows[5][0] == "30")
+        }
     }
 }
